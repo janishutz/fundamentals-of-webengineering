@@ -1,23 +1,64 @@
+/* new */
+body {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* new */
+article:has(footer) {
+  & main {
+    & img {
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+  }
+}
+
+/* new */
+article:has(header) {
+  & main {
+    & img {
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+  }
+}
+
 article {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   width: 350px;
   line-height: 1.5rem;
+  /* new */
+  height: min-content;
 
   & header {
     border-bottom: 1px solid var(--border-color);
     padding: var(--space);
+    /* new */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
     & a {
       text-decoration: none;
+      /* new */
+      display: flex;
+      align-items: center;
     }
   }
 
   & main {
     padding: var(--space);
     width: inherit;
+
+    /* new */
+    &:has(img) {
+      padding: 0;
+    }
+
     & img {
       width: inherit;
+      /* new */
+      border-radius: var(--border-radius);
     }
   }
 
@@ -26,6 +67,25 @@ article {
     & ul {
       padding: 0;
       list-style: none;
+      /* new */
+      /* I realize how janky this is, but it works. */
+      display: flex;
+      justify-content: space-between;
+      & li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      & li:not(:has(+ li)) {
+        justify-content: center;
+      }
+      & li:has(+ li)::before {
+        content: "";
+      }
+      & li:has(+ li)::after {
+        content: "|";
+      }
     }
   }
 }
