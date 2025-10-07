@@ -1,17 +1,46 @@
-:root {
-}
-
 body {
   overflow: hidden;
   color: black;
+  /* else defaults to have padding nonzero */
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: 1fr 8fr;
+  grid-template-rows: 1fr 8fr 1fr;
+  grid-template-areas: 
+  "sidebar header" 
+  "sidebar main" 
+  "footer footer";
+
 }
+
+/*  I only found out using the "large" display as a base is  
+ *  a bad practice after writing this. I realize this is suboptimal.
+ */ 
+@media screen and (width <= 500px) {
+  /* new sidebar size for small display */
+  body {
+    grid-template-columns: 12% 1fr;
+  }
+  /* make text in sidebar vanish on small display */
+  body > section > ul > li > a > span {
+    display: none;
+  }
+}
+
 
 body > section {
   border-right: 1px solid var(--border-color);
+  grid-area: sidebar;
 
   & ul {
     list-style-type: none;
     padding-inline-start: 0;
+    padding: 1rem;
+
+    & li {
+      padding: 0.5rem;
+    }
 
     & li > a {
       color: #999;
@@ -27,20 +56,47 @@ body > section {
 body > header {
   border-bottom: 1px solid var(--border-color);
 
+  grid-area: header;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+
   & h1 {
     font-size: 1.75rem;
     margin: 0;
     flex-grow: 1;
   }
+  /* icons */
+  & i {
+    padding: 0.25rem;
+  }
 }
 
 body > main {
   grid-area: main;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  /* I'm unsure on how to do this without using margins */
+  & article {
+    margin-left: 1rem;
+    margin-top: 1rem;
+  }
+
   height: calc(100vh - 100px);
   overflow-y: scroll;
 }
 
 body > footer {
+  grid-area: footer;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   border-top: 1px solid var(--border-color);
   background-color: #f0f0f0;
 }
