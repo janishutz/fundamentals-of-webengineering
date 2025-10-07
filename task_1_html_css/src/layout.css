@@ -1,169 +1,179 @@
 body {
-  overflow: hidden;
-  color: black;
-  /* else defaults to have padding nonzero */
-  padding: 0;
+    overflow: hidden;
+    color: black;
+    /* else defaults to have padding nonzero */
+    padding: 0;
 
-  display: grid;
-  grid-template-columns: 1fr 8fr;
-  grid-template-rows: 1fr 8fr 1fr;
-  grid-template-areas: 
-  "sidebar header" 
-  "sidebar main" 
-  "footer footer";
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    grid-template-rows: 1fr 8fr 1fr;
+    grid-template-areas:
+        "sidebar header"
+        "sidebar main"
+        "footer footer";
 
 }
 
 ul {
-  /* hide dot on all ul's */
-  list-style-type: none;
+    /* hide dot on all ul's */
+    list-style-type: none;
 }
 
 /*  I only found out using the "large" display as a base is bad while doing this.
  *  So yes, this is very janky.
- */  
+ */
 @media screen and (width > 1000px) {
-  form {
-    width: 60%
-  }
+    form {
+        width: 60%
+    }
 }
 
-@media screen and (width <= 1000px) {
-  form {
-    width: 80%;
-  }
+@media screen and (width <=1000px) {
+    form {
+        width: 80%;
+    }
 }
 
-@media screen and (width <= 700px) {
-  /* new sidebar size for small display */
-  body {
-    grid-template-columns: 12% 1fr;
-  }
-  /* make text in sidebar vanish on small display */
-  body > section > ul > li > a > span {
-    display: none;
-  }
-  form {
-    width: 100%;
-  }
+@media screen and (width <=700px) {
+
+    /* new sidebar size for small display */
+    body {
+        grid-template-columns: 12% 1fr;
+    }
+
+    /* make text in sidebar vanish on small display */
+    body>section>ul>li>a>span {
+        display: none;
+    }
+
+    form {
+        width: 100%;
+    }
 }
 
 
 .bluebutton {
-  background-color: rgb(173, 115, 250);
-  color: white;
+    background-color: rgb(173, 115, 250);
+    color: white;
 }
 
 .bluebutton:hover {
-  background-color: rgb(187, 149, 233)
+    background-color: rgb(187, 149, 233)
 }
 
-body > main > form {
+body>main>form {
 
-  & ul {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-    grid-auto-flow: row;
-    & li {
-      display: flex;
-      flex-direction: column;
-      margin: 1rem;
-      & h2 {
-        font-size: large;
-        color: cornflowerblue;
-        font-weight: normal;
-      }
-      & input {
-        padding: 5px;
-        border-width: 2px;
-        border-style: solid;
-        border-color: rgb(219, 207, 207);
-        border-radius: 5px;
-      }
-      & button {
-        width: 10rem;
-        margin: 5px;
-        padding: 10px;
-        border: none;
-        border-radius: 10px;
-      }
-      & div {
-        padding: 0.5rem;
-      }
+    & ul {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+        grid-auto-flow: row;
+
+        & li {
+            display: flex;
+            flex-direction: column;
+            margin: 1rem;
+
+            & h2 {
+                font-size: large;
+                color: cornflowerblue;
+                font-weight: normal;
+            }
+
+            & input {
+                padding: 5px;
+                border-width: 2px;
+                border-style: solid;
+                border-color: rgb(219, 207, 207);
+                border-radius: 5px;
+            }
+
+            & button {
+                width: 10rem;
+                margin: 5px;
+                padding: 10px;
+                border: none;
+                border-radius: 10px;
+            }
+
+            & div {
+                padding: 0.5rem;
+            }
+        }
     }
-  }
 }
 
 
-body > section {
-  border-right: 1px solid var(--border-color);
-  grid-area: sidebar;
+body>section {
+    border-right: 1px solid var(--border-color);
+    grid-area: sidebar;
 
-  & ul {
-    list-style-type: none;
-    padding-inline-start: 0;
-    padding: 1rem;
+    & ul {
+        list-style-type: none;
+        padding-inline-start: 0;
+        padding: 1rem;
 
-    & li {
-      padding: 0.5rem;
+        & li {
+            padding: 0.5rem;
+        }
+
+        & li>a {
+            color: #999;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        & li>a:hover {
+            color: black;
+        }
+    }
+}
+
+body>header {
+    border-bottom: 1px solid var(--border-color);
+
+    grid-area: header;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+
+    & h1 {
+        font-size: 1.75rem;
+        margin: 0;
+        flex-grow: 1;
     }
 
-    & li > a {
-      color: #999;
-      font-size: 14px;
-      text-decoration: none;
+    /* icons */
+    & i {
+        padding: 0.25rem;
     }
-    & li > a:hover {
-      color: black;
+}
+
+body>main {
+    grid-area: main;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    /* I'm unsure on how to do this without using margins */
+    & article {
+        margin-left: 1rem;
+        margin-top: 1rem;
     }
-  }
+
+    height: calc(100vh - 100px);
+    overflow-y: scroll;
 }
 
-body > header {
-  border-bottom: 1px solid var(--border-color);
+body>footer {
+    grid-area: footer;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  grid-area: header;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-
-  & h1 {
-    font-size: 1.75rem;
-    margin: 0;
-    flex-grow: 1;
-  }
-  /* icons */
-  & i {
-    padding: 0.25rem;
-  }
-}
-
-body > main {
-  grid-area: main;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-
-  /* I'm unsure on how to do this without using margins */
-  & article {
-    margin-left: 1rem;
-    margin-top: 1rem;
-  }
-
-  height: calc(100vh - 100px);
-  overflow-y: scroll;
-}
-
-body > footer {
-  grid-area: footer;
-  padding: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  border-top: 1px solid var(--border-color);
-  background-color: #f0f0f0;
+    border-top: 1px solid var(--border-color);
+    background-color: #f0f0f0;
 }
