@@ -1,87 +1,99 @@
 /* new */
 .card-body {
     display: flex;
-    justify-content: space-between;
-}
-
-/* new */
-article:has(footer) {
-    & main {
-        & img {
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-        }
-    }
-}
-
-/* new */
-article:has(header) {
-    & main {
-        & img {
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-        }
-    }
-}
-
-article:has(.card-check:checked) {
-    #special {
-        opacity: 0%;
-        max-height: 0;
-        transition: opacity 0.2s, max-height 0.2s ease 0.2s;
-    }
+    /* This is how you do the gaps properly */
+    gap: 1rem;
+    padding: 1rem; /* You may also use margin here instead */
 }
 
 article {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     width: 350px;
-    line-height: 1.5rem;
-
     height: min-content;
 
-    & header {
+    .card-check {
+        display: none;
+    }
+
+    .card-open-symbol {
+        font-size: 1.5rem;
+        rotate: 90deg;
+        transition: rotate 0.5s;
+        cursor: pointer;
+    }
+
+    &:has(.card-check:checked) {
+        >main {
+            opacity: 0%;
+            max-height: 0;
+            transition: opacity 0.2s, max-height 0.2s ease 0.2s;
+        }
+
+        .card-open-symbol {
+            rotate: 0deg;
+        }
+    }
+
+    &:has(header) {
+        main {
+            img {
+                border-radius: 0 0 var(--border-radius) var(--border-radius);
+            }
+        }
+    }
+
+    &:has(footer) {
+        main {
+            img {
+                border-radius: var(--border-radius) var(--border-radius) 0 0;
+            }
+        }
+    }
+
+
+    header {
+        line-height: 2rem;
         border-bottom: 1px solid var(--border-color);
         padding: var(--space);
         /* new */
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
 
-        & a {
+        a {
             text-decoration: none;
-            /* new */
             display: flex;
             align-items: center;
+            gap: 3px;
         }
     }
 
-    & main {
+    main {
         padding: var(--space);
         width: inherit;
 
-        /* Need to use max-height. Only works on explicit values */
         max-height: 2000px;
         transition: max-height 0.2s ease, opacity 0.2s 0.2s;
 
-        /* new */
         &:has(img) {
             padding: 0;
         }
 
-        & img {
+        img {
             width: inherit;
-            /* new */
             border-radius: var(--border-radius);
+            margin-bottom: -6px;
         }
     }
 
-    & footer {
+    footer {
         border-top: 1px solid var(--border-color);
 
-        & ul {
+        ul {
             padding: 0;
             list-style: none;
-            /* new */
-            /* I realize how janky this is, but it works. */
             display: flex;
             justify-content: space-between;
 

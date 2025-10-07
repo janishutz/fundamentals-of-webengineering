@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Document</title>
+    <title>Home | Open data explorer</title>
     <link href="default.css" rel="stylesheet" />
     <link href="layout.css" rel="stylesheet" />
     <link href="card.css" rel="stylesheet" />
@@ -37,14 +37,17 @@
         </ul>
     </section>
 
-    <main>
+    <main class="card-body">
         <article>
             <header>
+                <input type="checkbox" id="card-check" class="card-check">
+                <!-- <label for="card-check" class="card-open-symbol">&#9655;</label> -->
+                <!-- TODO: If using FontAwesome icons, switch to -down and update css -->
+                <label for="card-check" class="card-open-symbol"><i class="fa-solid fa-caret-right"></i></label>
                 <h1>How to start?</h1>
                 <a href="#"><i class="fa fa-solid fa-edit"></i> Edit</a>
-                <a href="#"><input type="checkbox" id="card-check" class="card-check"></a>
             </header>
-            <main id="special">
+            <main>
                 <h1>Here are some tips</h1>
                 <p>First think about where to you need some flexbox layout.</p>
                 <ol>
