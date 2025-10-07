@@ -14,10 +14,27 @@ body {
 
 }
 
-/*  I only found out using the "large" display as a base is  
- *  a bad practice after writing this. I realize this is suboptimal.
- */ 
-@media screen and (width <= 500px) {
+ul {
+  /* hide dot on all ul's */
+  list-style-type: none;
+}
+
+/*  I only found out using the "large" display as a base is bad while doing this.
+ *  So yes, this is very janky.
+ */  
+@media screen and (width > 1000px) {
+  form {
+    width: 60%
+  }
+}
+
+@media screen and (width <= 1000px) {
+  form {
+    width: 80%;
+  }
+}
+
+@media screen and (width <= 700px) {
   /* new sidebar size for small display */
   body {
     grid-template-columns: 12% 1fr;
@@ -25,6 +42,56 @@ body {
   /* make text in sidebar vanish on small display */
   body > section > ul > li > a > span {
     display: none;
+  }
+  form {
+    width: 100%;
+  }
+}
+
+
+.bluebutton {
+  background-color: rgb(173, 115, 250);
+  color: white;
+}
+
+.bluebutton:hover {
+  background-color: rgb(187, 149, 233)
+}
+
+body > main > form {
+
+  & ul {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-auto-flow: row;
+    & li {
+      display: flex;
+      flex-direction: column;
+      margin: 1rem;
+      & h2 {
+        font-size: large;
+        color: cornflowerblue;
+        font-weight: normal;
+      }
+      & input {
+        padding: 5px;
+        border-width: 2px;
+        border-style: solid;
+        border-color: rgb(219, 207, 207);
+        border-radius: 5px;
+      }
+      & button {
+        width: 10rem;
+        margin: 5px;
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+      }
+      & div {
+        padding: 0.5rem;
+      }
+    }
   }
 }
 
