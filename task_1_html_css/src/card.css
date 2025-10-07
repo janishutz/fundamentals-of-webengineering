@@ -22,12 +22,20 @@ article:has(header) {
   }
 }
 
+article:has(.card-check:checked) {
+  #special {
+    opacity: 0%;
+    max-height: 0;
+        transition: opacity 0.2s, max-height 0.2s ease 0.2s;
+  }
+}
+
 article {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   width: 350px;
   line-height: 1.5rem;
-  /* new */
+
   height: min-content;
 
   & header {
@@ -49,6 +57,10 @@ article {
   & main {
     padding: var(--space);
     width: inherit;
+
+    /* Need to use max-height. Only works on explicit values */
+    max-height: 2000px;
+    transition: max-height 0.2s ease, opacity 0.2s 0.2s;
 
     /* new */
     &:has(img) {
