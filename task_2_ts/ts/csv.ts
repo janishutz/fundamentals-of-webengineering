@@ -6,6 +6,7 @@ export type CSV_Data = Array<Record<string, unknown>>;
 
 const convertCSVtoJSON = async ( csvText: string ) => {
     // Type cast OK, as the typing of the external library is not perfect.
+    // NOTE: On transpilation to JS, it will be (more or less) disregarded anyway
     return ( await csv2json( csvText ) ) as CSV_Data;
 };
 
