@@ -22,15 +22,15 @@
     <main class="container-fluid">
         <article>
             <header>
-                <h2>Select csv data</h2>
+                <h2>Select CSV data</h2>
             </header>
             <form id="select-data-form">
                 <label for="file-input" class="custom-file-upload">
-                    <i class="fa fa-file-csv"></i> Select csv file to explore
+                    <i class="fa fa-file-csv"></i> Select CSV file to explore
                 </label>
                 <input id="file-input" type="file" aria-describedby="fileHelp" accept="text/csv" />
-                <small id="fileHelp">Please upload a csv file, where the first row is the header. And the values are
-                    comma(,) seperated.</small>
+                <small id="fileHelp">Please upload a CSV file, where the first row is the header. And the values are
+                    comma(,) separated.</small>
             </form>
         </article>
 
@@ -38,14 +38,32 @@
             <header>
                 <h2>Data infos</h2>
             </header>
-            <div id="data-info"></div>
+            <div id="data-info">
+                <h4>Filename</h4>
+                <p id="data-filename"></p>
+                <h4>File type</h4>
+                <p id="data-filetype"></p>
+                <h4>File size</h4>
+                <p id="data-filesize"></p>
+                <h4>Number of rows</h4>
+                <p id="data-rowcount"></p>
+            </div>
         </article>
 
         <article>
             <header>
                 <h2>Selected column infos</h2>
             </header>
-            <div id="column-info"></div>
+            <div id="column-info">
+                <h4>Filename</h4>
+                <p id="data-filename"></p>
+                <h4>File type</h4>
+                <p id="data-filetype"></p>
+                <h4>File size</h4>
+                <p id="data-filesize"></p>
+                <h4>Number of rows</h4>
+                <p id="data-rowcount"></p>
+            </div>
         </article>
 
         <article>

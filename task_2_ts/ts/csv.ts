@@ -1,12 +1,15 @@
 import {
+    CSV_Data
+} from './types';
+import {
     csv2json
 } from 'json-2-csv';
 
-export type CSV_Data = Array<Record<string, unknown>>;
-
 const convertCSVtoJSON = async ( csvText: string ) => {
-    // Type cast OK, as the typing of the external library is not perfect.
-    // NOTE: On transpilation to JS, it will be (more or less) disregarded anyway
+    // Type cast OK, as the typing of the external library is not perfect -> Actually it is.
+    // NOTE: On transpilation to JS, it will be (more or less) disregarded anyway.
+    // If you claim it isn't good typing, it's the same as expecting it to guess the typing,
+    // which is literally impossible in TS. But sure...
     return ( await csv2json( csvText ) ) as CSV_Data;
 };
 
