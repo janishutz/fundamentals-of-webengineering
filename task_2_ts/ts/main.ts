@@ -15,6 +15,7 @@ import {
 import {
     readCSV
 } from './csv';
+import persistance from './persistance';
 
 
 // ┌                                               ┐
@@ -76,15 +77,11 @@ columnDatatype.addConditionalElementBind( document.getElementById( 'title-column
     stringOrNumberCheckPredicate );
 
 
+
 // ┌                                               ┐
 // │           Bind to file input event            │
 // └                                               ┘
 fileInput.addEventListener( 'change', event => {
-    loadFile( event );
-} );
-
-
-const loadFile = ( event: Event ) => {
     if ( fileInput.files && fileInput.files.length > 0 ) {
         const file = fileInput.files[0]!;
 
@@ -109,6 +106,7 @@ const loadFile = ( event: Event ) => {
                     document.getElementById( 'table-header--' + i )!.addEventListener( 'click', () => {
                         // TODO: Decide on sorting cycling
                         // TODO: Add indicator as well
+                        // TODO: Want to hide infos and do an else for file infos and selected columns info?
                         if ( selectedColumn === column ) {
                             ascendingSort.set( !ascendingSort.get() );
                         } else {
@@ -145,6 +143,21 @@ const loadFile = ( event: Event ) => {
                 } );
 
                 dataList.set( data );
+                const config = persistance.get( file.name, file.size + 'B' );
+
+                if ( config ) {
+                    const dtype = typeof dataList.get()[0]![ config.sorted ];
+
+                    columnName.set( config.sorted );
+                    selectedColumn = config.active;
+                    ascendingSort.set( config.ascending );
+                    columnDatatype.set( dtype );
+
+                    if ( dtype === 'string' )
+                        filterInput.disabled = false;
+                    else
+                        filterInput.disabled = true;
+                }
             } )
             .catch( e => {
                 console.warn( e );
@@ -153,13 +166,21 @@ const loadFile = ( event: Event ) => {
     } else {
         alert( 'No file selected' );
     }
-};
+} );
+// TODO: Task says need to fire custom event on filter card... sure, why not.
+// It doesn't say that we need to use it though!
+
+// TODO: Maybe add an overlay that is shown during load?
+
 
 // ┌                                               ┐
 // │                    Sorting                    │
 // └                                               ┘
 const doSort = () => {
     filter.set( '' );
+    persistance.store(
+        filename.get(), filesize.get(), selectedColumn, selectedColumn, ascendingSort.get()
+    );
 
     if ( columnDatatype.get() === 'string' ) {
         columnEntries.set( computeDifferent( dataList.get(), selectedColumn ) );
@@ -194,6 +215,7 @@ const doSort = () => {
 
 columnName.onChange( doSort );
 ascendingSort.onChange( doSort );
+
 
 
 // ┌                                               ┐
