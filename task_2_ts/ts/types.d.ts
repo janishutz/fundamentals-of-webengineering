@@ -1,1 +1,4 @@
-export type CSV_Data = Array<Record<string, unknown>>;
+// Array<> is unnecessary, simply use below
+export type CSVRecord = Record<string, unknown>;
+
+export type CSV_Data = CSVRecord[];

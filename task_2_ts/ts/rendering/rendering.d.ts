@@ -4,6 +4,7 @@ export interface Ref<T> {
     'setConditionalElements': ( elements: HTMLElement[] ) => void;
     'addConditionalClasses': ( element: HTMLElement, onTrue: string, onFalse: string ) => void;
     'bind': ( element: HTMLInputElement, castFunction: ( val: string ) => T ) => void;
+    'onChange': ( callback: () => void ) => void;
 }
 
 export interface ListRef<T> {
@@ -12,6 +13,7 @@ export interface ListRef<T> {
     'sort': ( compare: ( a: T, b: T ) => number ) => void;
     'filter': ( predicate: ( value: T ) => boolean ) => void;
     'setTemplate': ( newTemplate: RenderTemplate ) => void;
+    'onChange': ( callback: () => void ) => void;
 }
 
 export type HTMLTagNames = keyof HTMLElementTagNameMap;
