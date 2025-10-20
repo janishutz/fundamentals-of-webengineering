@@ -2,6 +2,11 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import '../css/layout.css';
 import '@picocss/pico/css/pico.min.css';
 import {
+    computeDifferent,
+    computeMinMax,
+    numberCheckPredicate, stringOrNumberCheckPredicate
+} from './util';
+import {
     listRef, ref
 } from './rendering';
 import {
@@ -11,6 +16,11 @@ import {
     readCSV
 } from './csv';
 
+
+// ┌                                               ┐
+// │                  Define refs                  │
+// └                                               ┘
+const tableHeaderElement = document.getElementById( 'table-header' )!;
 const dataList = listRef<CSVRecord>(
     document.getElementById( 'table-body' )!,
     [],
@@ -22,7 +32,7 @@ const dataList = listRef<CSVRecord>(
     }
 );
 const headerList = listRef<string>(
-    document.getElementById( 'table-header' )!,
+    tableHeaderElement,
     [],
     'table-header',
     {
@@ -31,23 +41,48 @@ const headerList = listRef<string>(
         'children': []
     }
 );
-const filter = ref<string>( [ document.getElementById( 'filter' )! ], '' );
+const columnEntriesElement = document.getElementById( 'column-entries' )!;
+const columnMaxElement = document.getElementById( 'column-max' )!;
+const columnMinElement = document.getElementById( 'column-min' )!;
+const filter = ref<string>( [], '' );
+const filterInput = document.getElementById( 'filter' )! as HTMLInputElement;
 const filename = ref<string>( [ document.getElementById( 'data-filename' )! ], '' );
 const filetype = ref<string>( [ document.getElementById( 'data-filetype' )! ], '' );
 const filesize = ref<string>( [ document.getElementById( 'data-filesize' )! ], '' );
 const rowCount = ref<string>( [ document.getElementById( 'data-rowcount' )! ], '' );
 const columnName = ref<string>( [ document.getElementById( 'column-selected' )! ], '' );
 const columnDatatype = ref<string>( [ document.getElementById( 'column-datatype' )! ], '' );
-const columnEntries = ref<string>( [ document.getElementById( 'column-entries' )! ], '' );
-const columnMax = ref<string>( [ document.getElementById( 'column-max' )! ], '' );
-const columnMin = ref<string>( [ document.getElementById( 'column-min' )! ], '' );
+const columnEntries = ref<number>( [ columnEntriesElement ], 0 );
+const columnMax = ref<number>( [ columnMaxElement ], 0 );
+const columnMin = ref<number>( [ columnMinElement ], 0 );
 const fileInput = document.getElementById( 'file-input' )! as HTMLInputElement;
+const ascendingSort = ref<boolean>( [], true );
+
+let selectedColumn = '';
+
+filterInput.disabled = true;
+filterInput.value = '';
 
 
-// Bind to file input event
+// ┌                                               ┐
+// │    conditional rendering of some elements     │
+// └                                               ┘
+columnDatatype.addConditionalElementBind( columnMinElement, numberCheckPredicate );
+columnDatatype.addConditionalElementBind( columnMaxElement, numberCheckPredicate );
+columnDatatype.addConditionalElementBind( document.getElementById( 'title-column-min' )!, numberCheckPredicate );
+columnDatatype.addConditionalElementBind( document.getElementById( 'title-column-max' )!, numberCheckPredicate );
+columnDatatype.addConditionalElementBind( columnEntriesElement, stringOrNumberCheckPredicate );
+columnDatatype.addConditionalElementBind( document.getElementById( 'title-column-entries' )!,
+    stringOrNumberCheckPredicate );
+
+
+// ┌                                               ┐
+// │           Bind to file input event            │
+// └                                               ┘
 fileInput.addEventListener( 'change', event => {
     loadFile( event );
 } );
+
 
 const loadFile = ( event: Event ) => {
     if ( fileInput.files && fileInput.files.length > 0 ) {
@@ -55,7 +90,7 @@ const loadFile = ( event: Event ) => {
 
         filename.set( file.name );
         filetype.set( file.type );
-        filesize.set( String( file.size ) + 'B' ); // TODO: KB / MB conversion stuff
+        filesize.set( String( file.size ) + 'B' ); // TODO: KB / MB conversion stuff?
         readCSV( event )
             .then( data => {
                 // Row count
@@ -65,6 +100,33 @@ const loadFile = ( event: Event ) => {
                 const header = Object.keys( data[0]! );
 
                 headerList.set( header );
+
+
+                // Initialize sorting
+                for ( let i = 0; i < header.length; i++ ) {
+                    const column = header[ i ]!;
+
+                    document.getElementById( 'table-header--' + i )!.addEventListener( 'click', () => {
+                        // TODO: Decide on sorting cycling
+                        // TODO: Add indicator as well
+                        if ( selectedColumn === column ) {
+                            ascendingSort.set( !ascendingSort.get() );
+                        } else {
+                            // This column will now be the active column
+                            selectedColumn = column;
+                            ascendingSort.set( true );
+                            const dtype = typeof dataList.get()[0]![ column ];
+
+                            columnDatatype.set( dtype );
+                            columnName.set( column );
+
+                            if ( dtype === 'string' )
+                                filterInput.disabled = false;
+                            else
+                                filterInput.disabled = true;
+                        }
+                    } );
+                }
 
                 // ── Generate list. Need to first generate the correct template ───
                 // Reset, to not trigger expensive rerender
@@ -92,3 +154,61 @@ const loadFile = ( event: Event ) => {
         alert( 'No file selected' );
     }
 };
+
+// ┌                                               ┐
+// │                    Sorting                    │
+// └                                               ┘
+const doSort = () => {
+    filter.set( '' );
+
+    if ( columnDatatype.get() === 'string' ) {
+        columnEntries.set( computeDifferent( dataList.get(), selectedColumn ) );
+
+        if ( ascendingSort.get() ) {
+            dataList.sort( ( a, b ) => {
+                return ( a[ selectedColumn ] as string ).localeCompare( b[ selectedColumn ] as string );
+            } );
+        } else {
+            dataList.sort( ( a, b ) => {
+                return ( b[ selectedColumn ] as string ).localeCompare( a[ selectedColumn ] as string );
+            } );
+        }
+    } else if ( columnDatatype.get() === 'number' ) {
+        const stats = computeMinMax( dataList.get(), selectedColumn );
+
+        columnMin.set( stats[ 0 ] );
+        columnMax.set( stats[ 1 ] );
+        columnEntries.set( stats[ 2 ] );
+
+        if ( ascendingSort.get() ) {
+            dataList.sort( ( a, b ) => {
+                return ( a[ selectedColumn ] as number ) - ( b[ selectedColumn ] as number );
+            } );
+        } else {
+            dataList.sort( ( a, b ) => {
+                return ( b[ selectedColumn ] as number ) - ( a[ selectedColumn ] as number );
+            } );
+        }
+    }
+};
+
+columnName.onChange( doSort );
+ascendingSort.onChange( doSort );
+
+
+// ┌                                               ┐
+// │                   Filtering                   │
+// └                                               ┘
+// Bind filter ref to element
+filter.bind( filterInput, val => val );
+
+// Add listener to change of filter value.
+filter.onChange( () => {
+    if ( columnDatatype.get() === 'string' ) {
+        dataList.filter( a => {
+            return ( a[ selectedColumn ] as string ).includes( filter.get() );
+        } );
+    } else {
+        dataList.filter( () => true );
+    }
+} );
