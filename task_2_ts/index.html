@@ -55,14 +55,16 @@
                 <h2>Selected column infos</h2>
             </header>
             <div id="column-info">
-                <h4>Filename</h4>
-                <p id="data-filename"></p>
-                <h4>File type</h4>
-                <p id="data-filetype"></p>
-                <h4>File size</h4>
-                <p id="data-filesize"></p>
-                <h4>Number of rows</h4>
-                <p id="data-rowcount"></p>
+                <h4>Selected column</h4>
+                <p id="column-selected"></p>
+                <h4>Data type</h4>
+                <p id="column-datatype"></p>
+                <h4>Different entries</h4>
+                <p id="column-entries"></p>
+                <h4>Min</h4>
+                <p id="column-min"></p>
+                <h4>Max</h4>
+                <p id="column-max"></p>
             </div>
         </article>
 
@@ -78,7 +80,12 @@
             <header>
                 <h2>Data table</h2>
             </header>
-            <figure id="table-content"></figure>
+            <table id="table-content">
+                <thead id="table-header"></thead>
+                <tbody id="data-table">
+
+                </tbody>
+            </table>
         </article>
     </main>
 </body>
