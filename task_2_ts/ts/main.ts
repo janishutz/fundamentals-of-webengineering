@@ -3,13 +3,10 @@ import '../css/layout.css';
 import '@picocss/pico/css/pico.min.css';
 import {
     listRef, ref
-} from './rendering/framework';
+} from './rendering';
 import {
     CSVRecord
 } from './types';
-import {
-    RenderTemplate
-} from './rendering/rendering';
 import {
     readCSV
 } from './csv';

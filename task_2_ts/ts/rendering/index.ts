@@ -23,6 +23,10 @@ import {
     ref
 } from './primitives';
 
+export {
+    listRef,
+    ref
+};
 
 export default {
     ref,

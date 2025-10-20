@@ -1,0 +1,20 @@
+{
+  "name": "rendering",
+  "version": "1.0.0",
+  "description": "Simple rendering framework for this task",
+  "homepage": "https://github.com/janishutz/fundamentals-of-webengineering#readme",
+  "bugs": {
+    "url": "https://github.com/janishutz/fundamentals-of-webengineering/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janishutz/fundamentals-of-webengineering.git"
+  },
+  "license": "ISC",
+  "author": "Janis Hutz <development@janishutz.com>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
