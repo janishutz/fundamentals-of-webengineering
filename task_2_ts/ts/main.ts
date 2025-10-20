@@ -12,10 +12,10 @@ import {
 import {
     CSVRecord
 } from './types';
+import persistance from './persistance';
 import {
     readCSV
 } from './csv';
-import persistance from './persistance';
 
 
 // ┌                                               ┐
@@ -106,7 +106,7 @@ fileInput.addEventListener( 'change', event => {
                     document.getElementById( 'table-header--' + i )!.addEventListener( 'click', () => {
                         // TODO: Decide on sorting cycling
                         // TODO: Add indicator as well
-                        // TODO: Want to hide infos and do an else for file infos and selected columns info?
+                        // TODO: Want to hide infos and do an else static info for file infos and selected columns info?
                         if ( selectedColumn === column ) {
                             ascendingSort.set( !ascendingSort.get() );
                         } else {
@@ -167,12 +167,11 @@ fileInput.addEventListener( 'change', event => {
         alert( 'No file selected' );
     }
 } );
-// TODO: Task says need to fire custom event on filter card... sure, why not.
-// It doesn't say that we need to use it though!
+
+
 
 // TODO: Maybe add an overlay that is shown during load?
-
-
+//
 // ┌                                               ┐
 // │                    Sorting                    │
 // └                                               ┘
@@ -226,6 +225,14 @@ filter.bind( filterInput, val => val );
 
 // Add listener to change of filter value.
 filter.onChange( () => {
+    // TODO: Task says need to fire custom event on filter card... sure, why not.
+    // It doesn't say that we need to use it though!
+    // SO: Do you think this is good enough?
+    document.dispatchEvent( new CustomEvent( 'explorer:filter', {
+        'detail': 'Filtering has changed',
+        'cancelable': false
+    } ) );
+
     if ( columnDatatype.get() === 'string' ) {
         dataList.filter( a => {
             return ( a[ selectedColumn ] as string ).includes( filter.get() );
