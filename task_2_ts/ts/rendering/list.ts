@@ -30,7 +30,7 @@ export const listRef = <T>( parent: HTMLElement, data: T[], name: string, templa
         // Yes, I know, really bad performance, etc, but it's not needed for any other use case
         // here, other than a full replace of the data (no dynamic updates)
         list = data;
-        console.log( data );
+        parent.textContent = '';
 
         // Render the list based on template
         for ( let i = 0; i < data.length; i++ ) {
@@ -92,6 +92,7 @@ export const listRef = <T>( parent: HTMLElement, data: T[], name: string, templa
             if ( !evaluation && rendered[ index ] ) {
                 // can use ! here, as semantics of program tell us that this index will exist
                 nodes[ index ]!.remove();
+                rendered[ index ] = false;
             } else if ( evaluation && !rendered[ index ] ) {
                 currentIndexInChildrenList++;
                 parent.insertBefore( nodes[ index ]!, children[ currentIndexInChildrenList ]! );

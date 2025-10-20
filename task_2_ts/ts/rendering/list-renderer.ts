@@ -26,9 +26,9 @@ const renderer = <T extends StringIndexedObject>( data: T, template: RenderTempl
 
     if ( template.children.length === 0 ) {
         if ( template.attribute ) {
-            parent.innerText = String( data[ template.attribute ] );
+            parent.textContent = String( data[ template.attribute ] );
         } else {
-            parent.innerText = String( data );
+            parent.textContent = String( data );
         }
     }
 

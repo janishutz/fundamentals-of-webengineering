@@ -1,7 +1,8 @@
 export interface Ref<T> {
     'set': ( data: T ) => void;
     'get': () => T;
-    'setConditionalElements': ( elements: HTMLElement[] ) => void;
+    'addAdditionalElement': ( elements: HTMLElement, predicate: ( value: T ) => boolean ) => void;
+    'addConditionalElementBind': ( elements: HTMLElement, predicate: ( value: T ) => boolean ) => void;
     'addConditionalClasses': ( element: HTMLElement, onTrue: string, onFalse: string ) => void;
     'bind': ( element: HTMLInputElement, castFunction: ( val: string ) => T ) => void;
     'onChange': ( callback: () => void ) => void;

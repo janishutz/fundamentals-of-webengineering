@@ -2,6 +2,17 @@ import {
     Ref
 } from './rendering';
 
+interface ConditionalElement<T> {
+    'element': HTMLElement;
+    'predicate': ( value: T ) => boolean;
+}
+
+interface ConditionalClass {
+    'element': HTMLElement,
+    'onTrue': string,
+    'onFalse': string
+}
+
 /**
  * Responsive data (similar behaviour as in Vue.js)
  * @template T - The data type you wish to use (as long as you don't want it to be a list)
@@ -10,34 +21,44 @@ import {
  */
 export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
     let value: T = data;
-    let conditionalElements: HTMLElement[] = [];
 
+    const conditionalElements: ConditionalElement<T>[] = [];
     const onChangeFunctions: ( () => Promise<void> )[] = [];
-    const conditionalClasses: {
-        'element': HTMLElement,
-        'onTrue': string,
-        'onFalse': string
-    }[] = [];
+    const conditionalClasses: ConditionalClass[] = [];
     const boundElements: HTMLInputElement[] = [];
 
-    // ───────────────────────────────────────────────────────────────────
+
+    /**
+     * Bind to a further element (DOM text is updated for it)
+     * @param element - The element to add
+     */
+    const addAdditionalElement = ( element: HTMLElement ) => {
+        elements.push( element );
+    };
+
+    /**
+     * @returns The value the ref currently holds
+     */
     const get = (): T => {
         return value;
     };
 
-    // ───────────────────────────────────────────────────────────────────
+
+    /**
+     * @param data - The new value of the
+     */
     const set = ( data: T ): void => {
         value = data;
 
         // Update normal ref elements
         elements.forEach( el => {
-            el.innerText = String( data );
+            el.textContent = String( data );
         } );
 
         // Update conditional elements
         conditionalElements.forEach( el => {
             // convert to boolean (explicitly)
-            el.hidden = Boolean( data );
+            el.element.hidden = !el.predicate( data );
         } );
 
         conditionalClasses.forEach( el => {
@@ -54,6 +75,7 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
         }
     };
 
+
     /**
      * Bind to input change of an HTMLInputElement (two way bind)
      * @param element - The element to bind to (i.e. add a two-way bind to)
@@ -63,16 +85,24 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
         element.addEventListener( 'change', () => {
             set( castFunction( element.value ) );
         } );
+        element.value = String( value );
         boundElements.push( element );
     };
 
+
     /**
      * Add elements to be rendered conditionally on this ref. Treats type as booleanish
-     * @param elements - The elements that are rendered consistently
+     * @param element - The element that will be affected by predicate
+     * @param predicate - The predicate to evaluate when value is changed
      */
-    const setConditionalElements = ( elements: HTMLElement[] ): void => {
-        conditionalElements = elements;
+    const addConditionalElementBind = ( element: HTMLElement, predicate: ( value: T ) => boolean ): void => {
+        conditionalElements.push( {
+            'element': element,
+            'predicate': predicate
+        } );
+        element.hidden = !predicate( value );
     };
+
 
     /**
      * @param element - The element to do the operation on
@@ -107,7 +137,8 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
     return {
         set,
         get,
-        setConditionalElements,
+        addAdditionalElement,
+        addConditionalElementBind,
         addConditionalClasses,
         bind,
         onChange
