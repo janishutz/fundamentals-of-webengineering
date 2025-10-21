@@ -97,13 +97,21 @@ fileInput.addEventListener( 'change', event => {
                 const header = Object.keys( data[0]! );
 
                 headerList.set( header );
-
+                columnName.resetConditionalClasses();
 
                 // Initialize sorting
                 for ( let i = 0; i < header.length; i++ ) {
                     const column = header[ i ]!;
+                    const el = document.getElementById( 'table-header--' + i )!;
 
-                    document.getElementById( 'table-header--' + i )!.addEventListener( 'click', () => {
+                    columnName.addConditionalClasses(
+                        el,
+                        val => val === header[ i ],
+                        'column-selected',
+                        ''
+                    );
+
+                    el.addEventListener( 'click', () => {
                         // TODO: Decide on sorting cycling
                         // TODO: Add indicator as well
                         // TODO: Want to hide infos and do an else static info for file infos and selected columns info?
