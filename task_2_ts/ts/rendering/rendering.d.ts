@@ -3,7 +3,10 @@ export interface Ref<T> {
     'get': () => T;
     'addAdditionalElement': ( elements: HTMLElement, predicate: ( value: T ) => boolean ) => void;
     'addConditionalElementBind': ( elements: HTMLElement, predicate: ( value: T ) => boolean ) => void;
-    'addConditionalClasses': ( element: HTMLElement, onTrue: string, onFalse: string ) => void;
+    'addConditionalClasses': (
+        element: HTMLElement, predicate: ( value: T ) => boolean, onTrue: string, onFalse: string ) => void;
+    'resetConditionalClasses': () => void;
+    'resetConditionalElementBinds': () => void;
     'bind': ( element: HTMLInputElement, castFunction: ( val: string ) => T ) => void;
     'onChange': ( callback: () => void ) => void;
 }

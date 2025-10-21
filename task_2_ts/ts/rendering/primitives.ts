@@ -7,10 +7,11 @@ interface ConditionalElement<T> {
     'predicate': ( value: T ) => boolean;
 }
 
-interface ConditionalClass {
+interface ConditionalClass<T> {
     'element': HTMLElement,
     'onTrue': string,
-    'onFalse': string
+    'onFalse': string,
+    'predicate': ( value: T ) => boolean;
 }
 
 /**
@@ -22,10 +23,11 @@ interface ConditionalClass {
 export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
     let value: T = data;
 
-    const conditionalElements: ConditionalElement<T>[] = [];
     const onChangeFunctions: ( () => Promise<void> )[] = [];
-    const conditionalClasses: ConditionalClass[] = [];
     const boundElements: HTMLInputElement[] = [];
+
+    let conditionalElements: ConditionalElement<T>[] = [];
+    let conditionalClasses: ConditionalClass<T>[] = [];
 
 
     /**
@@ -62,7 +64,7 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
         } );
 
         conditionalClasses.forEach( el => {
-            el.element.classList.value = data ? el.onTrue : el.onFalse;
+            el.element.classList.value = el.predicate( data ) ? el.onTrue : el.onFalse;
         } );
 
         // Update boundElements
@@ -103,22 +105,33 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
         element.hidden = !predicate( value );
     };
 
+    const resetConditionalElementBinds = () => {
+        conditionalElements = [];
+    };
+
 
     /**
      * @param element - The element to do the operation on
+     * @param predicate - The predicate to evaluate when value is changed
      * @param onTrue - The classes (as strings) to set if true(ish)
      * @param onFalse - The classes to set on false(ish)
      */
     const addConditionalClasses = (
         element: HTMLElement,
+        predicate: ( value: T ) => boolean,
         onTrue: string,
         onFalse: string
     ) => {
         conditionalClasses.push( {
             'element': element,
             'onTrue': onTrue,
-            'onFalse': onFalse
+            'onFalse': onFalse,
+            'predicate': predicate
         } );
+    };
+
+    const resetConditionalClasses = () => {
+        conditionalClasses = [];
     };
 
 
@@ -139,7 +152,9 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
         get,
         addAdditionalElement,
         addConditionalElementBind,
+        resetConditionalElementBinds,
         addConditionalClasses,
+        resetConditionalClasses,
         bind,
         onChange
     };
