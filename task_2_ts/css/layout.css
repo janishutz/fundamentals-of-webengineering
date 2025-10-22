@@ -58,6 +58,16 @@ body>main {
     }
 }
 
+.table-container {
+    width: 100%;
+}
+
+.table-scroll-wrapper {
+    width: 100%;
+    max-height: 600px;
+    overflow: scroll;
+}
+
 /* Set a fixed scrollable wrapper */
 #table-content {
     max-height: 400px;

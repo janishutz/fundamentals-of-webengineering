@@ -37,8 +37,8 @@ const headerList = listRef<string>(
     [],
     'table-header',
     {
-        'type': 'td',
-        'cssClasses': [],
+        'type': 'th',
+        'cssClasses': [ 'sortable' ],
         'children': []
     }
 );
@@ -75,6 +75,10 @@ columnDatatype.addConditionalElementBind( document.getElementById( 'title-column
 columnDatatype.addConditionalElementBind( columnEntriesElement, stringOrNumberCheckPredicate );
 columnDatatype.addConditionalElementBind( document.getElementById( 'title-column-entries' )!,
     stringOrNumberCheckPredicate );
+columnDatatype.addConditionalElementBind( document.getElementById( 'column-info' )!, val => val !== '' );
+columnDatatype.addConditionalElementBind( document.getElementById( 'column-info-placeholder' )!, val => val === '' );
+filename.addConditionalElementBind( document.getElementById( 'data-info' )!, val => val !== '' );
+filename.addConditionalElementBind( document.getElementById( 'data-info-placeholder' )!, val => val === '' );
 
 
 

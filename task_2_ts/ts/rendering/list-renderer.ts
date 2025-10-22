@@ -18,6 +18,11 @@ const renderList = <T extends StringIndexedObject>(
 const renderer = <T extends StringIndexedObject>( data: T, template: RenderTemplate ): HTMLElement => {
     const parent = document.createElement( template.type );
 
+    for ( let i = 0; i < template.cssClasses.length; i++ ) {
+        console.log( 'Adding css class', template.cssClasses[i]! );
+        parent.classList.add( template.cssClasses[i]! );
+    }
+
     for ( let i = 0; i < template.children.length; i++ ) {
         const element = template.children[i]!;
 

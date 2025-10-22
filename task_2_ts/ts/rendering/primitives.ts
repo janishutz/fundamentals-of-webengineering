@@ -64,6 +64,7 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
         } );
 
         conditionalClasses.forEach( el => {
+            // FIXME: Use add and remove!
             el.element.classList.value = el.predicate( data ) ? el.onTrue : el.onFalse;
         } );
 

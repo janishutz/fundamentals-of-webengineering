@@ -48,6 +48,9 @@
                 <h4>Number of rows</h4>
                 <p id="data-rowcount"></p>
             </div>
+            <div id="data-info-placeholder">
+                No file selected
+            </div>
         </article>
 
         <article>
@@ -66,6 +69,9 @@
                 <h4 id="title-column-max">Max</h4>
                 <p id="column-max"></p>
             </div>
+            <div id="column-info-placeholder">
+                No column selected
+            </div>
         </article>
 
         <article>
@@ -76,15 +82,21 @@
             <input type="search" id="filter" name="filter" placeholder="Filter" disabled>
         </article>
 
-        <article style="width: 100%">
+        <article class="table-container">
             <header>
                 <h2>Data table</h2>
             </header>
-            <table id="table-content">
-                <thead id="table-header"></thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
+            <div class="table-scroll-wrapper">
+                <table id="table-content">
+                    <thead>
+                        <tr id="table-header">
+
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
         </article>
     </main>
 </body>
