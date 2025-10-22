@@ -11,19 +11,19 @@ const persistanceStore: PersistanceConfig = JSON.parse( localStorage.getItem( 'p
  * @param size - The filesize (in case file is changed)
  * @param sorted - The sorted column
  * @param active - The active column
- * @param ascending - True if sorting ascending
+ * @param sorting - True if sorting ascending
  */
 const store = (
     filename: string,
     size: string,
     sorted: string,
     active: string,
-    ascending: boolean
+    sorting: string
 ) => {
     persistanceStore[ `${ filename }-${ size }` ] = {
         'active': active,
         'sorted': sorted,
-        'ascending': ascending
+        'sorting': sorting
     };
     localStorage.setItem( 'persistance', JSON.stringify( persistanceStore ) );
 };

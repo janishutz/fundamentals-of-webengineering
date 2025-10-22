@@ -6,7 +6,7 @@ export type CSV_Data = CSVRecord[];
 export interface PersistanceConfigEntry {
     'sorted': string;
     'active': string;
-    'ascending': boolean;
+    'sorting': string;
 }
 
 export interface PersistanceConfig {

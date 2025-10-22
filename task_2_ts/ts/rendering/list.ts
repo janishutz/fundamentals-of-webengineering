@@ -9,7 +9,7 @@ export const listRef = <T>( parent: HTMLElement, data: T[], name: string, templa
     let list: T[] = data; // contains all values passed in
 
     const nodes: HTMLElement[] = [];
-    const rendered: boolean[] = []; // Mask for
+    const rendered: boolean[] = []; // Mask for rendering
     const onChangeFunctions: ( () => Promise<void> )[] = [];
 
     /**
@@ -75,6 +75,21 @@ export const listRef = <T>( parent: HTMLElement, data: T[], name: string, templa
         } );
     };
 
+    /** Reset the sorting */
+    const resetSort = (): void => {
+        const children = [ ...parent.children ];
+
+        children.sort( ( elA, elB ) => {
+            const a = parseInt( elA.id.split( '--' )[1]! );
+            const b = parseInt( elB.id.split( '--' )[1]! );
+
+            return a - b;
+        } );
+        children.forEach( el => {
+            parent.appendChild( el );
+        } );
+    };
+
 
     /**
      * Filter elements. More performant than doing it with set operation, as it is cheaper to reverse.
@@ -118,6 +133,7 @@ export const listRef = <T>( parent: HTMLElement, data: T[], name: string, templa
         get,
         set,
         sort,
+        resetSort,
         filter,
         setTemplate,
         onChange

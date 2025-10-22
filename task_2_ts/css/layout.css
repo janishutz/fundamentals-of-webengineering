@@ -58,13 +58,24 @@ body>main {
     }
 }
 
+.info {
+    h4 {
+        margin-bottom: 2px;
+        margin-top: 10px;
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
 .table-container {
     width: 100%;
 }
 
 .table-scroll-wrapper {
     width: 100%;
-    max-height: 600px;
+    max-height: 70vh;
     overflow: scroll;
 }
 
@@ -87,6 +98,7 @@ body>main {
 
     /* Because we must set sticky on th, we have to apply background styles here rather than on thead */
     & th {
+        cursor: pointer;
         border-left: 1px dotted rgba(200, 209, 224, 0.6);
         border-bottom: 1px solid #ddd;
 
@@ -112,12 +124,12 @@ body>main {
             color: #999;
         }
 
-        &.active.asc::after {
+        &.active.sorting.asc::after {
             font-family: FontAwesome;
             content: "\f0d8";
         }
 
-        &.active.desc::after {
+        &.active.sorting.desc::after {
             font-family: FontAwesome;
             content: "\f0d7";
         }

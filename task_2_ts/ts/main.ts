@@ -57,7 +57,7 @@ const columnEntries = ref<number>( [ columnEntriesElement ], 0 );
 const columnMax = ref<number>( [ columnMaxElement ], 0 );
 const columnMin = ref<number>( [ columnMinElement ], 0 );
 const fileInput = document.getElementById( 'file-input' )! as HTMLInputElement;
-const ascendingSort = ref<boolean>( [], true );
+const sorting = ref<string>( [], '' );
 
 let selectedColumn = '';
 
@@ -91,7 +91,7 @@ fileInput.addEventListener( 'change', event => {
 
         filename.set( file.name );
         filetype.set( file.type );
-        filesize.set( String( file.size ) + 'B' ); // TODO: KB / MB conversion stuff?
+        filesize.set( String( file.size ) + 'B' );
         readCSV( event )
             .then( data => {
                 // Row count
@@ -111,20 +111,35 @@ fileInput.addEventListener( 'change', event => {
                     columnName.addConditionalClasses(
                         el,
                         val => val === header[ i ],
-                        'column-selected',
-                        ''
+                        [ 'active' ],
+                        []
+                    );
+                    sorting.addConditionalClasses(
+                        el, val => {
+                            return val === 'ascending' && selectedColumn === header[ i ];
+                        }, [ 'asc' ], [ 'desc' ]
+                    );
+                    sorting.addConditionalClasses(
+                        el, val => {
+                            return val !== '' && selectedColumn === header[ i ];
+                        }, [ 'sorting' ], []
                     );
 
                     el.addEventListener( 'click', () => {
-                        // TODO: Decide on sorting cycling
-                        // TODO: Add indicator as well
-                        // TODO: Want to hide infos and do an else static info for file infos and selected columns info?
                         if ( selectedColumn === column ) {
-                            ascendingSort.set( !ascendingSort.get() );
+                            const sort = sorting.get();
+
+                            if ( sort === 'ascending' ) {
+                                sorting.set( 'descending' );
+                            } else if ( sort === 'descending' ) {
+                                sorting.set( '' );
+                            } else {
+                                sorting.set( 'ascending' );
+                            }
                         } else {
                             // This column will now be the active column
                             selectedColumn = column;
-                            ascendingSort.set( true );
+                            sorting.set( 'ascending' );
                             const dtype = typeof dataList.get()[0]![ column ];
 
                             columnDatatype.set( dtype );
@@ -160,10 +175,10 @@ fileInput.addEventListener( 'change', event => {
                 if ( config ) {
                     const dtype = typeof dataList.get()[0]![ config.sorted ];
 
-                    columnName.set( config.sorted );
                     selectedColumn = config.active;
-                    ascendingSort.set( config.ascending );
                     columnDatatype.set( dtype );
+                    columnName.set( config.sorted );
+                    sorting.set( config.sorting );
 
                     if ( dtype === 'string' )
                         filterInput.disabled = false;
@@ -183,49 +198,48 @@ fileInput.addEventListener( 'change', event => {
 
 
 // TODO: Maybe add an overlay that is shown during load?
-//
+
 // ┌                                               ┐
 // │                    Sorting                    │
 // └                                               ┘
 const doSort = () => {
     filter.set( '' );
     persistance.store(
-        filename.get(), filesize.get(), selectedColumn, selectedColumn, ascendingSort.get()
+        filename.get(), filesize.get(), selectedColumn, selectedColumn, sorting.get()
     );
+    let sorter = ascendingStringSort;
 
     if ( columnDatatype.get() === 'string' ) {
         columnEntries.set( computeDifferent( dataList.get(), selectedColumn ) );
-
-        if ( ascendingSort.get() ) {
-            dataList.sort( ( a, b ) => {
-                return ( a[ selectedColumn ] as string ).localeCompare( b[ selectedColumn ] as string );
-            } );
-        } else {
-            dataList.sort( ( a, b ) => {
-                return ( b[ selectedColumn ] as string ).localeCompare( a[ selectedColumn ] as string );
-            } );
-        }
     } else if ( columnDatatype.get() === 'number' ) {
         const stats = computeMinMax( dataList.get(), selectedColumn );
 
         columnMin.set( stats[ 0 ] );
         columnMax.set( stats[ 1 ] );
         columnEntries.set( stats[ 2 ] );
+        sorter = ascendingNumberSort;
+    }
 
-        if ( ascendingSort.get() ) {
-            dataList.sort( ( a, b ) => {
-                return ( a[ selectedColumn ] as number ) - ( b[ selectedColumn ] as number );
-            } );
-        } else {
-            dataList.sort( ( a, b ) => {
-                return ( b[ selectedColumn ] as number ) - ( a[ selectedColumn ] as number );
-            } );
-        }
+    if ( sorting.get() === 'ascending' ) {
+        dataList.sort( ( a, b ) => sorter( a, b ) );
+    } else if ( sorting.get() === 'descending' ) {
+        dataList.sort( ( a, b ) => sorter( b, a ) );
+    } else {
+        dataList.resetSort();
     }
 };
 
+const ascendingStringSort = ( a: CSVRecord, b: CSVRecord ) => {
+    return ( a[ selectedColumn ] as string ).localeCompare( b[ selectedColumn ] as string );
+};
+
+const ascendingNumberSort = ( a: CSVRecord, b: CSVRecord ) => {
+    return ( a[ selectedColumn ] as number ) - ( b[ selectedColumn ] as number );
+};
+
+
 columnName.onChange( doSort );
-ascendingSort.onChange( doSort );
+sorting.onChange( doSort );
 
 
 
@@ -237,9 +251,6 @@ filter.bind( filterInput, val => val );
 
 // Add listener to change of filter value.
 filter.onChange( () => {
-    // TODO: Task says need to fire custom event on filter card... sure, why not.
-    // It doesn't say that we need to use it though!
-    // SO: Do you think this is good enough?
     document.dispatchEvent( new CustomEvent( 'explorer:filter', {
         'detail': 'Filtering has changed',
         'cancelable': false

@@ -4,7 +4,7 @@ export interface Ref<T> {
     'addAdditionalElement': ( elements: HTMLElement, predicate: ( value: T ) => boolean ) => void;
     'addConditionalElementBind': ( elements: HTMLElement, predicate: ( value: T ) => boolean ) => void;
     'addConditionalClasses': (
-        element: HTMLElement, predicate: ( value: T ) => boolean, onTrue: string, onFalse: string ) => void;
+        element: HTMLElement, predicate: ( value: T ) => boolean, onTrue: string[], onFalse: string[] ) => void;
     'resetConditionalClasses': () => void;
     'resetConditionalElementBinds': () => void;
     'bind': ( element: HTMLInputElement, castFunction: ( val: string ) => T ) => void;
@@ -15,6 +15,7 @@ export interface ListRef<T> {
     'set': ( data: T[] ) => void;
     'get': () => T[];
     'sort': ( compare: ( a: T, b: T ) => number ) => void;
+    'resetSort': () => void;
     'filter': ( predicate: ( value: T ) => boolean ) => void;
     'setTemplate': ( newTemplate: RenderTemplate ) => void;
     'onChange': ( callback: () => void ) => void;

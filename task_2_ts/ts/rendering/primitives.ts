@@ -9,8 +9,8 @@ interface ConditionalElement<T> {
 
 interface ConditionalClass<T> {
     'element': HTMLElement,
-    'onTrue': string,
-    'onFalse': string,
+    'onTrue': string[],
+    'onFalse': string[],
     'predicate': ( value: T ) => boolean;
 }
 
@@ -50,31 +50,37 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
      * @param data - The new value of the
      */
     const set = ( data: T ): void => {
-        value = data;
+        if ( value !== data ) {
+            value = data;
+            // Update normal ref elements
+            elements.forEach( el => {
+                el.textContent = String( data );
+            } );
 
-        // Update normal ref elements
-        elements.forEach( el => {
-            el.textContent = String( data );
-        } );
-
-        // Update conditional elements
-        conditionalElements.forEach( el => {
+            // Update conditional elements
+            conditionalElements.forEach( el => {
             // convert to boolean (explicitly)
-            el.element.hidden = !el.predicate( data );
-        } );
+                el.element.hidden = !el.predicate( data );
+            } );
 
-        conditionalClasses.forEach( el => {
-            // FIXME: Use add and remove!
-            el.element.classList.value = el.predicate( data ) ? el.onTrue : el.onFalse;
-        } );
+            conditionalClasses.forEach( el => {
+                if ( el.predicate( data ) ) {
+                    el.element.classList.remove( ...el.onFalse );
+                    el.element.classList.add( ...el.onTrue );
+                } else {
+                    el.element.classList.remove( ...el.onTrue );
+                    el.element.classList.add( ...el.onFalse );
+                }
+            } );
 
-        // Update boundElements
-        boundElements.forEach( el => {
-            el.value = String( value );
-        } );
+            // Update boundElements
+            boundElements.forEach( el => {
+                el.value = String( value );
+            } );
 
-        for ( let i = 0; i < onChangeFunctions.length; i++ ) {
-            onChangeFunctions[ i ]!();
+            for ( let i = 0; i < onChangeFunctions.length; i++ ) {
+                onChangeFunctions[ i ]!();
+            }
         }
     };
 
@@ -120,8 +126,8 @@ export const ref = <T>( elements: HTMLElement[], data: T ): Ref<T> => {
     const addConditionalClasses = (
         element: HTMLElement,
         predicate: ( value: T ) => boolean,
-        onTrue: string,
-        onFalse: string
+        onTrue: string[],
+        onFalse: string[]
     ) => {
         conditionalClasses.push( {
             'element': element,
