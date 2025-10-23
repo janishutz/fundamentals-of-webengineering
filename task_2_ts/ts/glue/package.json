@@ -1,7 +1,7 @@
 {
-  "name": "rendering",
+  "name": "gluejs",
   "version": "1.0.0",
-  "description": "Simple rendering framework for this task",
+  "description": "It's not Vue, it's Glue! Because that's what's holding it together.",
   "homepage": "https://github.com/janishutz/fundamentals-of-webengineering#readme",
   "bugs": {
     "url": "https://github.com/janishutz/fundamentals-of-webengineering/issues"

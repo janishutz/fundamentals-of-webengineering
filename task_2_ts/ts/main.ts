@@ -8,7 +8,7 @@ import {
 } from './util';
 import {
     listRef, ref
-} from './rendering';
+} from './glue';
 import {
     CSVRecord
 } from './types';
