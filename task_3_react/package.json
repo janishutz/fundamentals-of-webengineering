@@ -1,0 +1,35 @@
+{
+  "name": "vite-react-typescript-starter",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "nodemon src/server/main.ts -w src/server",
+    "build": "vite build",
+    "start": "NODE_ENV=production ts-node --transpile-only src/server/main.ts",
+    "format": "prettier .  --write",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@picocss/pico": "^2.0.6",
+    "express": "^4.21.1",
+    "json-2-csv": "^5.5.6",
+    "multer": "^1.4.5-lts.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vite-express": "*"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.7.6",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.2",
+    "nodemon": "^3.1.7",
+    "prettier": "^3.3.3",
+    "vite": "^5.4.9"
+  }
+}

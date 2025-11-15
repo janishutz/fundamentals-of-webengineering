@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-webapp
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-webapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-webapp
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: {{ .Release.Name }}-webapp
+        image: {{ .Values.image.name }}-webapp:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5173
+        resources:
+          limits:
+            memory: "250M"
+          requests:
+            memory: "100M"
+        commnand: ["npm", "run", "dev"]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/vite.config.js
+          subPath: vite.config.js
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Release.Name }}-webapp-config 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-webapp-config
+data:
+  vite.config.js: |
+    export default {
+      server: {
+        host: '0.0.0.0',
+        port: 5173,
+        allowedHosts: true,
+        watch: {
+          usePolling: true,
+          interval: 1000,
+        },
+      },
+    }
