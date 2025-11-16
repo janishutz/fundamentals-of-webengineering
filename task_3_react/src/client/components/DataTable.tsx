@@ -35,30 +35,37 @@ const DataTable = (props: {data: CSV_Data}) => {
     }
 
     return (
-        <table id="table-content">
-            <thead>
-                <tr>
-                {
-                    header.map( (col) => (
-                        <ColHeader col={col} sortingHandle={sortingHandler} isSelected={col == sortCol} sortType={sortType}></ColHeader>
-                    ))
-                }
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    props.data.map( (row, i) => (
-                        <tr key={i}>
-                            {
-                                header.map( (col) => (
-                                    <Row col={col} content={row[col] as String}></Row>
-                                ))
-                            }
+        <article className="table-container">
+            <header>
+                <h2>Data table</h2>
+            </header>
+            <div className="table-scroll-wrapper">
+                <table id="table-content">
+                    <thead>
+                        <tr>
+                        {
+                            header.map( (col) => (
+                                <ColHeader col={col} sortingHandle={sortingHandler} isSelected={col == sortCol} sortType={sortType}></ColHeader>
+                            ))
+                        }
                         </tr>
-                    ))
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        {
+                            props.data.map( (row, i) => (
+                                <tr key={i}>
+                                    {
+                                        header.map( (col) => (
+                                            <Row col={col} content={row[col] as String}></Row>
+                                        ))
+                                    }
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </article>
     )
 }
 

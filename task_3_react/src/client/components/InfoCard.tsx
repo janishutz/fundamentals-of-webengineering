@@ -1,4 +1,3 @@
-import "../Layout.css";
 import { fileInfo } from "../types";
 
 const InfoCard = (props: { 
