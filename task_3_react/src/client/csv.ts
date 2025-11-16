@@ -1,7 +1,7 @@
 import { CSV_Data } from './types';
 import { csv2json } from 'json-2-csv';
 
-const convertCSVtoJSON = async ( csvText: string ) => {
+export const convertCSVtoJSON = async ( csvText: string ) => {
     // Type cast OK, as the typing of the external library is not perfect -> Actually it is.
     // NOTE: On transpilation to JS, it will be (more or less) disregarded anyway.
     // If you claim it isn't good typing, it's the same as expecting it to guess the typing,

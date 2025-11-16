@@ -9,3 +9,9 @@ export type fileInfo = {
     filesize: string;
     rowcount: number;
 }
+
+// FileCard receives this via props
+export type responseObject = {
+  names: string[],
+  uploadTimes: string[]
+}

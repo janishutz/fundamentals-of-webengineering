@@ -56,7 +56,7 @@ const DataTable = (props: {data: CSV_Data}) => {
                                 <tr key={i}>
                                     {
                                         header.map( (col) => (
-                                            <Row col={col} content={row[col] as String}></Row>
+                                            <Row key={i} col={col} content={row[col] as String}></Row>
                                         ))
                                     }
                                 </tr>
@@ -84,7 +84,7 @@ const ColHeader = (props: {col: String, sortingHandle: (s: String) => void, isSe
     );
 }
 
-const Row = (props: {col: String, content: String}) => {
+const Row = (props: {col: String, content: String, key: Key}) => {
     return <td key={props.col as Key}>{props.content}</td>;
 }
 

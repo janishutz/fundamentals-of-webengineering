@@ -36,6 +36,19 @@ article {
     width: 400px;
 }
 
+article.wide {
+    width: 800px
+}
+
+.action-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
 body>main {
     max-height: calc(100vh - 100px);
     overflow-y: auto;

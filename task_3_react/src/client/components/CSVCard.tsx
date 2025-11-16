@@ -8,7 +8,7 @@ const CSVCard = (props: {
   return (
     <article>
         <header>
-            <h2>Select CSV data</h2>
+            <h2>Upload CSV data</h2>
         </header>
         <form ref={props.formRef} action="/upload" method="post" encType="multipart/form-data" >
             <label htmlFor="file-input" className="custom-file-upload">

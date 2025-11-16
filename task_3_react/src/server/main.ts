@@ -1,19 +1,24 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import multer from "multer";
+import * as fs from "node:fs/promises";
+import { responseObject } from "./types";
+import path from "path";
 
 const app = express();
 
+// Set up file storage
 const storage = multer.diskStorage({
   destination: "./src/server/uploads",
   filename: (_req, file, cb) => {
     // Suggested in Multer's readme
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + "-" + uniqueSuffix)
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E3);
+    cb(null, file.fieldname + "-" + uniqueSuffix);
   }
 });
-const upload = multer({ storage: storage });
 
+// CSV file upload endpoint
+const upload = multer({ storage: storage });
 app.post(
   "/upload", 
   upload.single("dataFile"), 
@@ -21,6 +26,48 @@ app.post(
     console.log(req, res, next)
   }
 );
+
+// Endpoint to send back file names/upload times
+app.get("/status", async (_req, res) => {
+  const resObject: responseObject = {
+    names: [],
+    uploadTimes: []
+  };
+
+  const dir = await fs.opendir("./src/server/uploads/");
+  for await (const file of dir) {
+    resObject.names.push(file.name);
+    const stats = await fs.stat(`./src/server/uploads/${file.name}`);
+    resObject.uploadTimes.push(stats.birthtime.toString());
+  }
+
+  res.status(200).json(resObject);
+})
+
+// Endpoint to send back whole files
+app.get("/download/:fileName", (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(__dirname, "uploads", fileName); // Filepaths must be absolute
+  res.sendFile(filePath, err => {
+    if (err) {
+      console.error("Error sending file:", err);
+      res.status(500).send("Error downloading file");
+    }
+  });
+}) 
+
+// Endpoint to remove files from server
+app.delete("/delete/:fileName", async (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(__dirname, "uploads", fileName);
+  try {
+    await fs.unlink(filePath);    // deletes the file
+    res.status(200).send("File deleted successfully");
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    res.status(500).send("Error deleting file");
+  }
+});
 
 
 // example route which returns a message

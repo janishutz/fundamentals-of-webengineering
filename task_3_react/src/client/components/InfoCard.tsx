@@ -14,6 +14,7 @@ const InfoCard = (props: {
             <h2>Data infos</h2>
         </header>
          <div className="info">
+            {noFileMessage}
             <h4>Filename</h4>
             <p>{props.info.filename}</p>
 
@@ -26,7 +27,6 @@ const InfoCard = (props: {
             <h4>Number of rows</h4>
             <p>{props.info.rowcount}</p>
         </div>
-        {noFileMessage}
     </article>
   );
 }
