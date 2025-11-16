@@ -4,7 +4,8 @@ import {
     CSV_Data, fileInfo, responseObject
 } from './types';
 import React, {
-    useEffect, useRef, useState
+    useEffect,
+    useRef, useState
 } from 'react';
 import {
     convertCSVtoJSON, readCSV
@@ -14,6 +15,7 @@ import DataTable from './components/DataTable';
 import FileCard from './components/FileCard';
 import InfoCard from './components/InfoCard';
 import Layout from './components/Layout';
+import "./sse"
 
 function App () {
     const [
@@ -34,15 +36,37 @@ function App () {
         setFileList
     ] = useState( null as responseObject | null );
 
-    // Effect has to be in top level of the component
-    useEffect( () => {
-        fetch( '/status', {
-            'method': 'GET'
-        } )
-            .then( response => response.json() )
-            .then( response => setFileList( response ) )
-            .catch( error => console.log( error ) );
-    } );
+    // Add evenbt listener for server-sent events on first render
+    const [active, setActive] = useState(false);
+
+    useEffect( ()=> {
+        if (!active) {
+            document.addEventListener("sse:uploaded", async _ev => {
+                await fetch( '/status', {
+                    'method': 'GET'
+                } )
+                    .then( response => response.json() )
+                    .then( response => setFileList( response ) )
+                    .catch( error => console.log( error ) );
+            });
+            document.addEventListener("sse:deleted", async _ev => {
+                await fetch( '/status', {
+                    'method': 'GET'
+                } )
+                    .then( response => response.json() )
+                    .then( response => setFileList( response ) )
+                    .catch( error => console.log( error ) );
+            });
+            setActive(true);
+            // Initial fetch of file list at first component render
+            fetch( '/status', {
+                'method': 'GET'
+            } )
+                .then( response => response.json() )
+                .then( response => setFileList( response ) )
+                .catch( error => console.log( error ) );
+        }       
+    })
 
     const formRef = useRef( null );
 
