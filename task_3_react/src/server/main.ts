@@ -143,7 +143,7 @@ const sendSSEData = ( event: string, data: string ) => {
         subs[i]!.response.write( `data: ${ JSON.stringify( {
             'event': event,
             'data': data
-        } ) }` );
+        } ) }\n\n` );
     }
 };
 
