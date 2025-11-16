@@ -1,4 +1,7 @@
 import * as fs from 'node:fs/promises';
+import {
+    EventEmitter
+} from 'node:stream';
 import ViteExpress from 'vite-express';
 import express from 'express';
 import multer from 'multer';
@@ -17,6 +20,8 @@ const storage = multer.diskStorage( {
     // Suggested in Multer's readme
         const uniqueSuffix = Date.now() + '-' + Math.round( Math.random() * 1E3 );
 
+        fileEvent.emit( 'uploaded', file.fieldname + '-' + uniqueSuffix );
+
         cb( null, file.fieldname + '-' + uniqueSuffix );
     }
 } );
@@ -24,6 +29,10 @@ const storage = multer.diskStorage( {
 const upload = multer( {
     'storage': storage
 } );
+
+class FileEvent extends EventEmitter {}
+
+const fileEvent = new FileEvent();
 
 app.post(
     '/upload',
@@ -78,8 +87,9 @@ app.delete( '/delete/:fileName', async ( req, res ) => {
     );
 
     try {
-        await fs.unlink( filePath ); // deletes the file
+        await fs.rm( filePath ); // deletes the file
         res.status( 200 ).send( 'File deleted successfully' );
+        fileEvent.emit( 'deleted', filePath );
     } catch ( error ) {
         console.error( 'Error deleting file:', error );
         res.status( 500 ).send( 'Error deleting file' );
@@ -91,6 +101,57 @@ app.get( '/hello', async function ( _req, res ) {
     res.status( 200 ).json( {
         'message': 'Hello World!'
     } );
+} );
+
+
+interface SSESubscriber {
+    'uuid': string;
+    'response': express.Response;
+}
+
+interface SSESubscribers {
+    [id: string]: SSESubscriber | undefined;
+}
+const subscribers: SSESubscribers = {};
+
+app.get( '/sse', async ( request: express.Request, response: express.Response ) => {
+    response.writeHead( 200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+    } );
+    response.status( 200 );
+    response.flushHeaders();
+    response.write( `data: ${ JSON.stringify( [] ) }\n\n` );
+
+    const uuid = crypto.randomUUID();
+
+    subscribers[uuid] = {
+        'uuid': uuid,
+        'response': response
+    };
+
+    request.on( 'close', () => {
+        subscribers[ uuid ] = undefined;
+    } );
+} );
+
+const sendSSEData = ( event: string, data: string ) => {
+    const subs = Object.values( subscribers );
+
+    for ( let i = 0; i < subs.length; i++ ) {
+        subs[i]!.response.write( `data: ${ JSON.stringify( {
+            'event': event,
+            'data': data
+        } ) }` );
+    }
+};
+
+fileEvent.on( 'uploaded', file => {
+    sendSSEData( 'uploaded', file );
+} );
+fileEvent.on( 'deleted', file => {
+    sendSSEData( 'deleted', file );
 } );
 
 // Do not change below this line
