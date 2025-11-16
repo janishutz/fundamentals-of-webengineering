@@ -1,5 +1,9 @@
-import { CSV_Data } from './types';
-import { csv2json } from 'json-2-csv';
+import {
+    CSV_Data
+} from './types';
+import {
+    csv2json
+} from 'json-2-csv';
 
 export const convertCSVtoJSON = async ( csvText: string ) => {
     // Type cast OK, as the typing of the external library is not perfect -> Actually it is.
