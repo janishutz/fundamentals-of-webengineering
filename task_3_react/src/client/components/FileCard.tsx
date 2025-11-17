@@ -28,24 +28,26 @@ const FileCard = ( props: {
             <header>
                 <h2>Select a File</h2>
             </header>
-            <table id="table-content">
-                <thead>
-                    <tr>
-                        <th>Filename</th>
-                        <th>Upload Time</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        list ? list.map( ( file, i ) => <FileRow
-                            key={i}
-                            filename={file.filename!}
-                            uploadTime={file.uploadTime!}
-                            fileChangeHandle={props.fileChangeHandle}/> ) : <tr></tr>
-                    }
-                </tbody>
-            </table>
+            <div className="table-scroll-wrapper">
+                <table id="table-content">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Upload Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            list ? list.map( ( file, i ) => <FileRow
+                                key={i}
+                                filename={file.filename!}
+                                uploadTime={file.uploadTime!}
+                                fileChangeHandle={props.fileChangeHandle}/> ) : <tr></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </article>
     );
 };
@@ -80,4 +82,3 @@ const FileRow = ( props: {
 };
 
 export default FileCard;
-

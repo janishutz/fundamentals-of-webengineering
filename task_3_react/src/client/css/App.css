@@ -1,6 +1,6 @@
 /*some style for app component*/
 :root {
-    --spacing: 0.25rem;
+    --spacing: 0.5rem;
     --border-color: #a0a0a0;
 }
 
@@ -37,7 +37,11 @@ article {
 }
 
 article.wide {
-    width: 800px
+    width: 800px;
+
+    .table-scroll-wrapper {
+        max-height: 40vh;
+    }
 }
 
 .action-icons {

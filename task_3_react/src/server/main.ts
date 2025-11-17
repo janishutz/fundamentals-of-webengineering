@@ -66,6 +66,21 @@ app.post(
     }
 );
 
+
+const zeroExtend = ( num: number ) => {
+    if ( num < 10 ) {
+        return '0' + num;
+    } else {
+        return '' + num;
+    }
+};
+
+const formatDate = ( date: Date ) => {
+    return `${ date.getFullYear() }-${ zeroExtend( date.getMonth() ) }-${ zeroExtend( date.getDay() ) }`
+    + ' at '
+    + `${ zeroExtend( date.getHours() ) }:${ zeroExtend( date.getMinutes() ) }:${ zeroExtend( date.getSeconds() ) }`;
+};
+
 // Endpoint to send back file names/upload times
 app.get( '/status', async ( _req, res ) => {
     const resObject: responseObject = {
@@ -78,7 +93,7 @@ app.get( '/status', async ( _req, res ) => {
         resObject.names.push( file.name );
         const stats = await fs.stat( `./src/server/uploads/${ file.name }` );
 
-        resObject.uploadTimes.push( stats.birthtime.toString() );
+        resObject.uploadTimes.push( formatDate( stats.birthtime ) );
     }
 
     res.status( 200 ).json( resObject );
