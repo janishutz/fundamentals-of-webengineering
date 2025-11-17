@@ -1,13 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "@fortawesome/fontawesome-free/css/all.css";
-import App from "./App";
-import "@picocss/pico/css/pico.min.css";
+import '@fortawesome/fontawesome-free/css/all.css';
+import './index.css';
+import '@picocss/pico/css/pico.min.css';
+import App from './App';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
-import "./index.css";
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-      <App />
-  </React.StrictMode>,
-);
+ReactDOM.createRoot( document.getElementById( 'root' )! ).render( <React.StrictMode>
+    <App />
+</React.StrictMode>, );

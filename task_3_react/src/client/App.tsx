@@ -1,5 +1,6 @@
 import './css/App.css';
 import '@fortawesome/fontawesome-free/css/all.css';
+import './sse';
 import {
     CSV_Data, fileInfo, responseObject
 } from './types';
@@ -15,7 +16,6 @@ import DataTable from './components/DataTable';
 import FileCard from './components/FileCard';
 import InfoCard from './components/InfoCard';
 import Layout from './components/Layout';
-import "./sse"
 
 function App () {
     const [
@@ -35,32 +35,36 @@ function App () {
         fileList,
         setFileList
     ] = useState( null as responseObject | null );
-
     // For the loading spinner in DataTable
-    const [loading, setLoading] = useState(false);
-
+    const [
+        loading,
+        setLoading
+    ] = useState( false );
     // Add evenbt listener for server-sent events on first render
-    const [active, setActive] = useState(false);
+    const [
+        active,
+        setActive
+    ] = useState( false );
 
-    useEffect( ()=> {
-        if (!active) {
-            document.addEventListener("sse:uploaded", async _ev => {
-                await fetch( '/status', {
+    useEffect( () => {
+        if ( !active ) {
+            document.addEventListener( 'sse:uploaded', () => {
+                fetch( '/status', {
                     'method': 'GET'
                 } )
                     .then( response => response.json() )
                     .then( response => setFileList( response ) )
                     .catch( error => console.log( error ) );
-            });
-            document.addEventListener("sse:deleted", async _ev => {
-                await fetch( '/status', {
+            } );
+            document.addEventListener( 'sse:deleted', () => {
+                fetch( '/status', {
                     'method': 'GET'
                 } )
                     .then( response => response.json() )
                     .then( response => setFileList( response ) )
                     .catch( error => console.log( error ) );
-            });
-            setActive(true);
+            } );
+            setActive( true );
             // Initial fetch of file list at first component render
             fetch( '/status', {
                 'method': 'GET'
@@ -68,14 +72,14 @@ function App () {
                 .then( response => response.json() )
                 .then( response => setFileList( response ) )
                 .catch( error => console.log( error ) );
-        }       
-    })
+        }
+    } );
 
     const formRef = useRef( null );
 
     // This is triggered in CSVCard
     const handleFileUpload = async ( e: React.ChangeEvent<HTMLInputElement> ): Promise<void> => {
-        setLoading(true)
+        setLoading( true );
         const file = e.target.files?.[0];
 
         if ( !file ) throw new Error( 'No file received' );
@@ -90,13 +94,13 @@ function App () {
 
         setInfo( newFileInfo );
         setData( data );
-        setLoading(false);
+        setLoading( false );
 
         if ( formRef.current ) {
             // Upload to server
             const formData = new FormData( formRef.current );
 
-            await fetch( '/upload', {
+            await fetch( '/upload?fname=' + file.name, {
                 'method': 'POST',
                 'body': formData
             } );
@@ -104,8 +108,8 @@ function App () {
     };
 
     const handleFileChange = async ( fileName: string ) => {
-        setLoading(true)
-        
+        setLoading( true );
+
         const response = await fetch( `/download/${ fileName }` );
         const blob = await response.blob();
         const text = await blob.text();
@@ -114,8 +118,15 @@ function App () {
 
         const data = await convertCSVtoJSON( text );
 
+        setInfo( {
+            'filesize': blob.size + 'B',
+            'filetype': response.headers.get( 'Content-Type' ) ?? 'text/csv',
+            'filename': fileName,
+            'rowcount': data.length
+        } );
+
         // Updating fileInfo requires more effort since blob doesn't have the metadata
-        setLoading(false);
+        setLoading( false );
         setData( data );
     };
 

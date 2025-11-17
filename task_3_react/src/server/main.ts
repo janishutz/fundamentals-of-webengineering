@@ -11,17 +11,35 @@ import {
 } from './types';
 
 const app = express();
+
+const sanitizeFilePath = ( path: string ) => {
+    // eslint-disable-next-line no-useless-escape
+    return path.replace( /[\/\\].*/, '' ).replace( '..', '' );
+};
+
 // Set up file storage
 const storage = multer.diskStorage( {
     'destination': './src/server/uploads',
     'filename': (
-        _req, file, cb
+        req, file, cb
     ) => {
-    // Suggested in Multer's readme
+        // Suggested in Multer's readme
         const uniqueSuffix = Date.now() + '-' + Math.round( Math.random() * 1E3 );
-        const fname = file.fieldname + '-' + uniqueSuffix;
-        // TODO: We could consider allowing the filename to be overwritten using a query param on the
-        // request (i.e. url would be /upload?fname=<filename>)
+
+        let fname = req.query['fname']
+            ? sanitizeFilePath( String( req.query['fname'] ) )
+            : file.fieldname;
+
+        const index = fname.lastIndexOf( '.' );
+
+        let fext = '';
+
+        if ( index > -1 ) {
+            fname = fname.slice( 0, index );
+            fext = fname.substring( index );
+        }
+
+        fname += '-' + uniqueSuffix + fext;
 
         fileEvent.emit( 'uploaded', fname );
 

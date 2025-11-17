@@ -5,6 +5,7 @@ import {
     CSV_Data
 } from '../types';
 
+
 const DataTable = ( props: {
     'data': CSV_Data,
     'loading': boolean
@@ -33,6 +34,7 @@ const DataTable = ( props: {
         }
     };
 
+
     if ( sortCol !== 'None' && sortType === 'asc' ) {
         props.data.sort( ( a, b ) => {
             if ( a[sortCol]! < b[sortCol]! ) return -1;
@@ -49,6 +51,8 @@ const DataTable = ( props: {
 
             return 0;
         } );
+    } else {
+        props.data.sort();
     }
 
     return (
@@ -61,8 +65,9 @@ const DataTable = ( props: {
                     <thead>
                         <tr>
                             {
-                                header.map( col => <ColHeader
+                                header.map( ( col, i ) => <ColHeader
                                     col={col}
+                                    key={i}
                                     sortingHandle={sortingHandler}
                                     isSelected={col == sortCol}
                                     sortType={sortType}></ColHeader> )
@@ -74,7 +79,8 @@ const DataTable = ( props: {
                             props.data.map( ( row, i ) => (
                                 <tr key={i}>
                                     {
-                                        header.map( col => <Row key={i} col={col} content={row[col] as string}></Row> )
+                                        header.map( ( col, j ) => <Row key={`${ i }:${ j }`}
+                                            col={col} content={row[col] as string}></Row> )
                                     }
                                 </tr>
                             ) )
@@ -117,4 +123,3 @@ const Row = ( props: {
 };
 
 export default DataTable;
-
