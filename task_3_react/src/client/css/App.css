@@ -49,8 +49,44 @@ article.wide {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    font-size: 18px;
+    font-size: 1rem;
     cursor: pointer;
+    padding: 5px;
+
+    i {
+        transition: color 0.2s linear;
+
+        &:hover {
+            color: var(--pico-primary-hover);
+        }
+    }
+}
+
+.loading-spinner {
+    display: flex;
+    background-color: rgb(40, 40, 40, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    color: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transform: scale(0);
+    transition: transform 0.1s linear;
+
+    &.active {
+        transform: scale(1);
+    }
+
+    div {
+        background-color: rgb(40, 40, 40, 0.6);
+        border-radius: 20px;
+        padding: 30px;
+    }
 }
 
 body>main {

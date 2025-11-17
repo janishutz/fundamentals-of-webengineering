@@ -8,7 +8,6 @@ import {
 
 const DataTable = ( props: {
     'data': CSV_Data,
-    'loading': boolean
 } ) => {
     if ( props.data.length == 0 ) return <></>;
 
@@ -57,7 +56,7 @@ const DataTable = ( props: {
 
     return (
         <article className="table-container">
-            <header aria-busy={props.loading}>
+            <header>
                 <h2>Data table</h2>
             </header>
             <div className="table-scroll-wrapper">

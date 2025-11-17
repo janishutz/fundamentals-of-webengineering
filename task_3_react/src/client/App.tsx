@@ -126,16 +126,21 @@ function App () {
         } );
 
         // Updating fileInfo requires more effort since blob doesn't have the metadata
-        setLoading( false );
         setData( data );
+        setLoading( false );
     };
 
     return (
         <Layout>
+            <div className={'loading-spinner' + ( loading ? ' active' : '' )}>
+                <div aria-busy="true" >
+                    Loading...
+                </div>
+            </div>
             <CSVCard handleChange={handleFileUpload} formRef={formRef}></CSVCard>
             <FileCard fileList={fileList as responseObject} fileChangeHandle={handleFileChange}></FileCard>
             <InfoCard info={info}></InfoCard>
-            <DataTable data={data} loading={loading}></DataTable>
+            <DataTable data={data}></DataTable>
         </Layout>
     );
 }
