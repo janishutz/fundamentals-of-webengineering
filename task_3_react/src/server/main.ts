@@ -19,10 +19,13 @@ const storage = multer.diskStorage( {
     ) => {
     // Suggested in Multer's readme
         const uniqueSuffix = Date.now() + '-' + Math.round( Math.random() * 1E3 );
+        const fname = file.fieldname + '-' + uniqueSuffix;
+        // TODO: We could consider allowing the filename to be overwritten using a query param on the
+        // request (i.e. url would be /upload?fname=<filename>)
 
-        fileEvent.emit( 'uploaded', file.fieldname + '-' + uniqueSuffix );
+        fileEvent.emit( 'uploaded', fname );
 
-        cb( null, file.fieldname + '-' + uniqueSuffix );
+        cb( null, fname );
     }
 } );
 // CSV file upload endpoint
@@ -37,12 +40,11 @@ const fileEvent = new FileEvent();
 app.post(
     '/upload',
     upload.single( 'dataFile' ),
-    (
-        req, res, next
-    ) => {
-        console.log(
-            req, res, next
-        );
+    ( _req, res ) => {
+        // NOTE: We do only need the next function in the handler when we want a middleware,
+        // otherwise we can simply omit it
+        console.log( 'Uploaded file' );
+        res.send( 'Ok' );
     }
 );
 
@@ -140,10 +142,14 @@ const sendSSEData = ( event: string, data: string ) => {
     const subs = Object.values( subscribers );
 
     for ( let i = 0; i < subs.length; i++ ) {
-        subs[i]!.response.write( `data: ${ JSON.stringify( {
-            'event': event,
-            'data': data
-        } ) }\n\n` );
+        try {
+            subs[i]!.response.write( `data: ${ JSON.stringify( {
+                'event': event,
+                'data': data
+            } ) }\n\n` );
+        } catch ( e ) {
+            console.debug( e );
+        }
     }
 };
 
