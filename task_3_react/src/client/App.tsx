@@ -36,6 +36,9 @@ function App () {
         setFileList
     ] = useState( null as responseObject | null );
 
+    // For the loading spinner in DataTable
+    const [loading, setLoading] = useState(false);
+
     // Add evenbt listener for server-sent events on first render
     const [active, setActive] = useState(false);
 
@@ -72,6 +75,7 @@ function App () {
 
     // This is triggered in CSVCard
     const handleFileUpload = async ( e: React.ChangeEvent<HTMLInputElement> ): Promise<void> => {
+        setLoading(true)
         const file = e.target.files?.[0];
 
         if ( !file ) throw new Error( 'No file received' );
@@ -86,6 +90,7 @@ function App () {
 
         setInfo( newFileInfo );
         setData( data );
+        setLoading(false);
 
         if ( formRef.current ) {
             // Upload to server
@@ -99,6 +104,8 @@ function App () {
     };
 
     const handleFileChange = async ( fileName: string ) => {
+        setLoading(true)
+        
         const response = await fetch( `/download/${ fileName }` );
         const blob = await response.blob();
         const text = await blob.text();
@@ -108,7 +115,7 @@ function App () {
         const data = await convertCSVtoJSON( text );
 
         // Updating fileInfo requires more effort since blob doesn't have the metadata
-
+        setLoading(false);
         setData( data );
     };
 
@@ -117,7 +124,7 @@ function App () {
             <CSVCard handleChange={handleFileUpload} formRef={formRef}></CSVCard>
             <FileCard fileList={fileList as responseObject} fileChangeHandle={handleFileChange}></FileCard>
             <InfoCard info={info}></InfoCard>
-            <DataTable data={data}></DataTable>
+            <DataTable data={data} loading={loading}></DataTable>
         </Layout>
     );
 }
